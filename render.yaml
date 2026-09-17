@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: amethystplus
+    runtime: node
+    plan: starter
+    numInstances: 1
+    buildCommand: npm ci --include=dev --prefix frontend/amethyst-ep && npm run build --prefix frontend/amethyst-ep
+    startCommand: node backend/render.mjs
+    healthCheckPath: /healthz
+    disk:
+      name: amethyst-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 24.20.0
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_PATH
+        value: /var/data/amethyst.sqlite
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_NAME
+        value: Rachel

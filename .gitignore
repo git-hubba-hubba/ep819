@@ -1,0 +1,17 @@
+# Credentials and local settings
+.env
+.env.*
+!.env.example
+# Installed dependencies and generated frontend
+node_modules/
+dist/
+dist-ssr/
+# Persistent local data (never deploy local accounts or images in Git)
+backend/data/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+# Local files
+.DS_Store
+*.log

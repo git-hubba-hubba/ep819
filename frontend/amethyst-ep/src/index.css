@@ -1,0 +1,20 @@
+:root {
+  --brand-blue: #2447a3;
+  --brand-blue-deep: #123b91;
+  --brand-blue-light: #527bcc;
+  --brand-cream: #eee9d6;
+  --brand-surface: #f6f1dc;
+  --brand-lime: #a7cc60;
+  --brand-lime-light: #dce9be;
+  --brand-green-ink: #34531c;
+  --brand-charcoal: #202427;
+  --brand-muted: #625e5c;
+  --brand-border: #d5cfbb;
+  --brand-blue-tint: #e2e8f6;
+}
+:root { font-family: Arial, Helvetica, sans-serif; color: #eee9d6; background: #202427; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button { font: inherit; }
+button:focus-visible { outline: 3px solid #fff6d6; outline-offset: 7px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

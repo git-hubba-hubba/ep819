@@ -1,0 +1,7 @@
+{
+  "name": "amethyst-plus-api",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": { "start": "node --env-file-if-exists=.env server.mjs", "dev": "node --env-file-if-exists=.env --watch server.mjs", "test": "node --test test/*.test.mjs" }
+}

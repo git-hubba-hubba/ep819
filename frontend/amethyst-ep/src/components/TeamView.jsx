@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import TeamMemberPanel from './TeamMemberPanel'
+import AdminAccess from './AdminAccess'
 
 export default function TeamView({ tickets, members, canEdit, onSaveMember, onAssign, onOpen }) {
   const [selected, setSelected] = useState(null)
@@ -9,6 +10,7 @@ export default function TeamView({ tickets, members, canEdit, onSaveMember, onAs
   const assignedTo = name => tickets.filter(t => t.owner.toLowerCase() === name.toLowerCase())
   return <>
     <div className="page-heading"><div><p className="eyebrow">WORKSPACE / TEAM</p><h1>People & ownership<span className="heading-dot">.</span></h1><p className="muted">Your team, their roles, and the action items they own.</p></div>{canEdit && <button className="primary-button" onClick={() => setPanel('new')}>＋ Add person</button>}</div>
+    {canEdit && <AdminAccess />}
     <div className="team-grid">{people.map(person => {
       const assigned = assignedTo(person.name)
       const open = assigned.filter(t => t.status !== 'Completed').length

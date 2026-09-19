@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { api } from '../api'
+import AmethystPlus from './AmethystPlus'
 
-export default function AuthPanel({ onAuthenticated, onBack }) {
+export default function AuthPanel({ view, onChangeView, onAuthenticated, onBack }) {
   const [mode, setMode] = useState('login')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -17,6 +18,7 @@ export default function AuthPanel({ onAuthenticated, onBack }) {
   }
   return <main className="auth-page">
     <button className="text-button" onClick={onBack}>← Back to AmethystPlus</button>
+    <div className="page-image"><AmethystPlus value={view} onChange={onChangeView} /></div>
     <section className="auth-card">
       <span className="brand-mark" aria-hidden="true">A+</span>
       <p className="eyebrow">AMETHYSTPLUS WORKSPACE</p>

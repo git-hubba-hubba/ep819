@@ -4,14 +4,14 @@ Requires Node.js 24+. Uses built-in SQLite and crypto; no dependency install is 
 
 ## Start locally
 
-Provision the single administrator before allowing sign-ups. Supply your own email and a password of 12–128 characters. Do not commit credentials.
+Provision the initial administrator before allowing sign-ups. Supply your own email and a password of 12–128 characters. Do not commit credentials.
 
 ```sh
 cd backend
 ADMIN_EMAIL='your-admin@example.com' ADMIN_PASSWORD='your-unique-long-password' npm start
 ```
 
-The administrator is created only if none exists. Later starts can use `npm start` with no credentials. Supplying credentials for an existing administrator does not reset its password. Public sign-up always creates readers, even if the request includes a role. Owner names are assignment labels; assigning a ticket does not create an account or send a notification.
+The initial administrator is created only if none exists. Existing administrators can grant admin access to registered accounts from Team → Grant admin access. Multiple administrators are supported; startup removes the legacy single-admin database restriction. Later starts can use `npm start` with no credentials. Supplying credentials for an existing administrator does not reset its password. Public sign-up always creates readers, even if the request includes a role. Owner names are assignment labels; assigning a ticket does not create an account or send a notification.
 
 Alternatively, save `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `backend/.env`, then run `npm start` from `backend`. Both `npm start` and `npm run dev` automatically load this ignored file. Use normal variable names and email addresses, without Markdown backslashes. Restart the backend after changing `.env`; existing admin passwords are not reset automatically.
 
@@ -58,3 +58,5 @@ Each executed workstream links to a single ticket. Roadmap and ticket changes ar
 Startup creates an empty `team` table without changing existing data. Authenticated users can read `GET /api/team`; only the admin can `POST /api/team` or `PATCH /api/team/:id`. Profiles contain name, position, email, and an optional uploaded PNG/JPEG/WebP image (maximum 512 KB), stored in SQLite. Updates require the current version. Email and display name must be unique within the directory.
 
 Changing a person's name updates matching ticket and roadmap owner labels in one transaction. Team profiles are separate from login accounts and do not send invitations or grant access.
+
+`POST /api/admins` accepts `{ email }` and grants an existing account admin access. Only authenticated administrators may call it. Unknown emails return 404; readers cannot promote themselves. New sign-ups remain readers. Promoted users can reload the workspace to see admin controls.

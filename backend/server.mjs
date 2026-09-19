@@ -60,7 +60,7 @@ export async function createApp({ databasePath = resolve('data/amethyst.sqlite')
   const db = new DatabaseSync(databasePath)
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
     CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('admin','reader')));
-    CREATE UNIQUE INDEX IF NOT EXISTS single_admin ON users(role) WHERE role='admin';
+    DROP INDEX IF EXISTS single_admin;
     CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id INTEGER REFERENCES users(id), expires INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS tickets (id INTEGER PRIMARY KEY, data TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);`)
@@ -68,10 +68,10 @@ export async function createApp({ databasePath = resolve('data/amethyst.sqlite')
   initializeTeam(db)
   if (adminEmail || adminPassword) {
     const { email, password } = credentials({ email: adminEmail, password: adminPassword })
-    const existing = db.prepare("SELECT * FROM users WHERE role='admin'").get()
-    if (existing && existing.email !== email) throw new Error('An admin account already exists with a different email.')
+    const existing = db.prepare('SELECT * FROM users WHERE email=?').get(email)
+    if (existing && existing.role !== 'admin') throw new Error('Admin email is already registered as a reader. Ask an existing admin to grant access.')
     if (!existing) {
-      if (db.prepare('SELECT 1 FROM users WHERE email=?').get(email)) throw new Error('Admin email is already registered as a reader. Choose a separate admin email.')
+      if (db.prepare("SELECT 1 FROM users WHERE role='admin'").get()) throw new Error('An admin account already exists. Use the Team page to grant additional admin access.')
       db.prepare('INSERT INTO users(name,email,password,role) VALUES (?,?,?,?)').run(adminName, email, await hashPassword(password), 'admin')
     }
   }
@@ -123,6 +123,16 @@ export async function createApp({ databasePath = resolve('data/amethyst.sqlite')
         return send(200, { ok: true })
       }
       if (!user) throw fail(401, 'Please sign in to view the workspace.')
+      if (path === '/api/admins' && req.method === 'POST') {
+        if (user.role !== 'admin') throw fail(403, 'Only an administrator can grant admin access.')
+        const body = await readBody(req)
+        const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) throw fail(400, 'Enter a valid email address.')
+        const account = db.prepare('SELECT * FROM users WHERE email=?').get(email)
+        if (!account) throw fail(404, 'No account exists for this email. Ask this person to create an account first.')
+        db.prepare("UPDATE users SET role='admin' WHERE id=?").run(account.id)
+        return send(200, { user: publicUser({ ...account, role: 'admin' }) })
+      }
       if (await handleTeam({ db, path, req, user, send, readBody })) return
       if (await handleRoadmap({ db, path, req, user, send, readBody })) return
       if (path === '/api/tickets' && req.method === 'GET') return send(200, { tickets: db.prepare('SELECT data FROM tickets ORDER BY id DESC').all().map(row => JSON.parse(row.data)) })

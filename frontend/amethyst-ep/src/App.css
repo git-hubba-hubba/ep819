@@ -8,4 +8,8 @@
 .path-status p { font-size: 13px; color: #c3c3b9; margin: 0; }
 .reset-path { border: 0; background: none; color: #c0d98d; padding: 12px; cursor: pointer; font-size: 12px; }
 .reset-path span { margin-left: 8px; }
+.page-image { display: flex; justify-content: center; width: 100%; padding: 16px; margin-bottom: 24px; }
+.page-image .amethyst-plus { width: min(100%, 280px); }
+.page-image .path-node { min-width: 44px; min-height: 44px; }
+.workspace-image { border-radius: 12px; background: radial-gradient(ellipse at top right, #527bcc55, transparent 60%), linear-gradient(135deg, var(--brand-charcoal), var(--brand-blue-deep)); }
 @media (max-width: 600px) { .experience { padding: 40px 12px 24px; } .path-status { margin-top: 32px; } }

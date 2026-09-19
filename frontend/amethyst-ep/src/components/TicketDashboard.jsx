@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import FileImport from './FileImport'
 import { priorities, statuses } from '../data/tickets'
 
 const day = () => new Date().toLocaleDateString('en-CA')
 function isOverdue(ticket) { return ticket.dueDate && ticket.dueDate < day() && ticket.status !== 'Completed' }
 const age = (date) => date ? Math.max(0, Math.floor((Date.now() - Date.parse(date)) / 86400000)) : null
 
-export default function TicketDashboard({ tickets, canEdit, onOpen, onCreate }) {
+export default function TicketDashboard({ tickets, canEdit, onOpen, onCreate, onSave, people }) {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('All statuses')
   const [priority, setPriority] = useState('All priorities')
@@ -21,7 +22,7 @@ export default function TicketDashboard({ tickets, canEdit, onOpen, onCreate }) 
   function reset() { setSearch(''); setStatus('All statuses'); setPriority('All priorities'); setOwner('All owners'); setScope('all') }
   const stats = [ ['all', 'Total tickets', tickets.length], ['open', 'Open action items', tickets.filter(t => t.status !== 'Completed').length], ['urgent', 'High priority / Tejas', tickets.filter(t => ['High', 'Tejas'].includes(t.priority) && t.status !== 'Completed').length], ['overdue', 'Past due', tickets.filter(isOverdue).length] ]
   return <>
-    <div className="page-heading"><div><p className="eyebrow">WORKSPACE / ACTION ITEMS</p><h1>Ticketing dashboard<span className="heading-dot">.</span></h1><p className="muted">Clear ownership. Fewer loose ends. Everything in one place.</p></div>{canEdit && <button className="primary-button" onClick={onCreate}>＋ New ticket</button>}</div>
+    <div className="page-heading"><div><p className="eyebrow">WORKSPACE / ACTION ITEMS</p><h1>Ticketing dashboard<span className="heading-dot">.</span></h1><p className="muted">Clear ownership. Fewer loose ends. Everything in one place.</p></div>{canEdit && <div className="page-actions"><FileImport kind="tickets" onSave={onSave} people={people} /><button className="primary-button" onClick={onCreate}>＋ New ticket</button></div>}</div>
     <div className="stats-grid">{stats.map(([key, label, count]) => <button key={key} className={`stat-card ${scope === key ? 'active' : ''}`} aria-pressed={scope === key} onClick={() => setScope(key)}><span>{label}</span><strong>{count.toString().padStart(2, '0')}</strong><span className="stat-caption">{key === 'all' ? 'Across the workspace' : key === 'open' ? 'Awaiting completion' : key === 'urgent' ? 'Needs attention' : 'With an assigned due date'}</span></button>)}</div>
     <section className="ticket-board" aria-label="Tickets">
       <div className="board-title"><h2>Action register <span>{filtered.length}</span></h2><span className="muted">{canEdit ? 'Admin editing enabled' : 'Read-only workspace'}</span></div>

@@ -140,3 +140,12 @@
 .member-image-field label { margin-bottom: 8px; }
 .member-image-field small { font-size: 11px; }
 @media (max-width: 480px) { .member-image-field { align-items: flex-start; flex-direction: column; } }
+
+.page-actions { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+.file-import { max-width: 320px; }
+.file-import details { margin-top: 8px; font-size: 12px; line-height: 1.5; }
+.file-import summary { cursor: pointer; }
+.import-review { padding: 12px; background: var(--brand-cream); border-radius: 6px; line-height: 1.5; overflow-wrap: anywhere; }
+
+.admin-access-form { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.admin-access-form label { display: grid; gap: 8px; flex: 1 1 240px; }
